@@ -25,16 +25,11 @@ export default async function CardWrapper() {
     <>
       {/* NOTE: comment in this code when you get to this point in the course */}
 
-      <Card title="Collected COD (USD)" value={'254.5k'} type="collected" />
-      <Card
-        title="Completed Shipment"
-        value={numberOfInvoices}
-        type="invoices"
-      />
-      <Card title="Out for delievery" value={450} type="pending" />
-
-      <Card
-        title="Yet to be shipped"
+      <Card2 title="Collected" value={totalPaidInvoices} type="collected" />
+      <Card2 title="Pending" value={totalPendingInvoices} type="pending" />
+      <Card2 title="Total Invoices" value={numberOfInvoices} type="invoices" />
+      <Card2
+        title="Total Customers"
         value={numberOfCustomers}
         type="customers"
       />
@@ -42,14 +37,14 @@ export default async function CardWrapper() {
   );
 }
 
-export function Card({
+export function Card2({
   title,
   value,
   type,
 }: {
   title: string;
   value: number | string;
-  type: 'invoices' | 'customers' | 'pending' | 'Total Orders';
+  type: 'Scheduled' | 'Out for shipment' | 'Pending' | 'Total Orders';
 }) {
   const Icon = iconMap[type];
 
