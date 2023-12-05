@@ -9,6 +9,13 @@ export type User = {
   password: string;
 };
 
+export type Order = {
+  customerId: string;
+  orderDate: string;
+  items: Array<{ productId: string; quantity: number }>;
+  totalAmount: number;
+};
+
 export type Customer = {
   id: string;
   name: string;
@@ -86,3 +93,19 @@ export type InvoiceForm = {
   amount: number;
   status: 'pending' | 'paid';
 };
+
+// Add this to definitions.ts
+import { z } from 'zod';
+
+export const OrderSchema = z.object({
+  id: z.string().optional(),
+  customerId: z.string(),
+  orderDate: z.string(),
+  items: z.array(
+    z.object({
+      productId: z.string(),
+      quantity: z.number(),
+    }),
+  ),
+  totalAmount: z.number(),
+});

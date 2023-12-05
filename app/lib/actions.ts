@@ -1,11 +1,12 @@
 'use server';
 
 import { z } from 'zod';
-import { sql } from '@vercel/postgres';
+import { sql, db } from '@vercel/postgres';
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { signIn } from '@/auth';
 import { AuthError } from 'next-auth';
+import { OrderSchema, Order } from './definitions'; // Import Order type
 
 const FormSchema = z.object({
   id: z.string(),
@@ -64,5 +65,28 @@ export async function authenticate(
       }
     }
     throw error;
+  }
+}
+
+export async function addOrders(orders: Order[]) {
+  const validOrders = orders.filter(
+    (order) => OrderSchema.safeParse(order).success,
+  );
+
+  // Using db to handle multiple inserts efficiently
+  const client = await db.connect();
+  try {
+    await Promise.all(
+      validOrders.map((order) => {
+        return client.sql`
+        INSERT INTO YourOrdersTable (customerId, orderDate, items, totalAmount)
+        VALUES (${order.customerId}, ${order.orderDate}, ${JSON.stringify(
+          order.items,
+        )}, ${order.totalAmount})
+      `;
+      }),
+    );
+  } finally {
+    await client.release();
   }
 }
